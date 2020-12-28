@@ -6,7 +6,7 @@ INSTALL:
 1) Clone the repository/download the zip file
 2) Open a console window and navigate to the zip file location/repository
 3) Navigate to */AboutAPlaylist/java_backend/out/artifacts/_app_mBE_jar/
-4) Give the command "_app_mBE.jar" (Should say "Server Started!" after successful start)
+4) Give the command "java -jar _app_mBE.jar" (Should say "Server Started!" after successful start)
 5) Open a new console window and navigate back to the zip file location/repository
 6) Navigate to */AboutAPlaylist/react_frontend
 7) Give the command "npm install" and wait for install to complete
