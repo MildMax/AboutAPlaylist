@@ -17,3 +17,11 @@ INSTALL:
 9) Once the main window has appeared, find a Spotify playlist link, copy it, and paste it into the main window and wait for the results
 
 Have fun! 
+
+# Here's a look at the front page:
+
+![Front Page](https://github.com/MildMax/AboutAPlaylist/blob/master/media/aap_front_page.png)
+
+# Here's a look at the info page:
+
+![Info Page](https://github.com/MildMax/AboutAPlaylist/blob/master/media/aap_info_page.png)
