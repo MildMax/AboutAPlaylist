@@ -1,0 +1,21 @@
+<component name="libraryTable">
+  <library name="se.michaelthelin.spotify:spotify-web-api-java:6.5.1" type="repository">
+    <properties maven-id="se.michaelthelin.spotify:spotify-web-api-java:6.5.1" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/spotify-web-api-java-6.5.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jackson-databind-2.11.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jackson-annotations-2.11.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jackson-core-2.11.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/gson-2.8.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/nv-i18n-1.27.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpclient5-cache-5.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpclient5-5.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpcore5-5.0.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpcore5-h2-5.0.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-codec-1.13.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/slf4j-api-1.7.30.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

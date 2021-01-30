@@ -1,53 +1,84 @@
 package com.jburns.aap;
 
 import com.wrapper.spotify.SpotifyApi;
+import com.wrapper.spotify.SpotifyHttpManager;
 import com.wrapper.spotify.exceptions.SpotifyWebApiException;
+import com.wrapper.spotify.model_objects.credentials.AuthorizationCodeCredentials;
 import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
 import com.wrapper.spotify.model_objects.specification.*;
-import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
+import com.wrapper.spotify.model_objects.specification.Image;
+import com.wrapper.spotify.requests.authorization.authorization_code.AuthorizationCodeUriRequest;
+import com.wrapper.spotify.requests.authorization.authorization_code.pkce.AuthorizationCodePKCERequest;
 import com.wrapper.spotify.requests.data.artists.GetArtistRequest;
 import com.wrapper.spotify.requests.data.playlists.GetPlaylistRequest;
 import org.apache.http.ParseException;
 
-import java.io.IOException;
-import java.io.File;
+import java.awt.*;
+import java.io.*;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.URI;
 import java.util.Scanner;
 
 public class SpotifyConnector {
 
     private static final String CLIENT_ID = "274b49bd37574a97ac41109acccb9023";
+    private static final URI redirectUri = SpotifyHttpManager.makeUri("http://localhost:8888/callback");
+    private static final String codeVerifier = "NlJx4kD4opk4HY7zBM6WfUHxX7HoF8A2TUhOIPGA74w";
+    private static final String codeChallenge = "w6iZIj99vHGtEx_NVl9u3sthTN646vvkiP8OMCGfPmo";
     private static SpotifyApi spotifyApi = null;
-    private static ClientCredentialsRequest clientCredentialsRequest;
+    private static AuthorizationCodePKCERequest authorizationCode;
+    private static AuthorizationCodeUriRequest authorizationCodeUriRequest;
 
     public SpotifyConnector() {
-        String url = System.getProperty("user.dir");
-        //url = url.concat("\\src\\com\\jburns\\aap");
-        //System.out.println(url);
-        File cs = new File(url + "\\cs.txt");
-        String cstxt = null;
-        try {
-            Scanner s = new Scanner(cs);
-            cstxt = s.nextLine();
-            s.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-
 
         spotifyApi = new SpotifyApi.Builder()
                 .setClientId(CLIENT_ID)
-                .setClientSecret(cstxt)
+                .setRedirectUri(redirectUri)
                 .build();
-        clientCredentialsRequest = spotifyApi.clientCredentials().build();
         try {
-            final ClientCredentials clientCredentials = clientCredentialsRequest.execute();
+            authorizationCodeUriRequest = spotifyApi.authorizationCodePKCEUri(codeChallenge).build();
 
-            // Set access token for further "spotifyApi" object usage
-            spotifyApi.setAccessToken(clientCredentials.getAccessToken());
+            final URI uri = authorizationCodeUriRequest.execute();
 
-            System.out.println("Expires in: " + clientCredentials.getExpiresIn());
-        } catch (IOException | SpotifyWebApiException | ParseException e) {
+            // get permissions and code for authorization
+            Desktop.getDesktop().browse(uri);
+
+            ServerSocket codeSock = new ServerSocket(8888);
+            Socket curr = codeSock.accept();
+            InputStream in = curr.getInputStream();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            String line = reader.readLine();    // reads a line of text
+
+            System.out.println(line);
+            String[] vals = line.split(" ");
+            String[] resourceVals = vals[1].split("=");
+            String code = resourceVals[resourceVals.length - 1];
+
+            OutputStream out = curr.getOutputStream();
+            PrintWriter writer = new PrintWriter(out, true);
+            writer.println("HTTP/1.1 200 OK\r\n\r\nThanks, feel free to close this window and return to the About A Playlist main page!!!\r\n\r\n");
+
+            in.close();
+            reader.close();
+            out.close();
+            writer.close();
+            curr.close();
+            codeSock.close();
+
+            authorizationCode = spotifyApi.authorizationCodePKCE(code, codeVerifier).build();
+
+            final AuthorizationCodeCredentials authorizationCodeCredentials = authorizationCode.execute();
+
+            // Set access and refresh token for further "spotifyApi" object usage
+            spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
+            spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
+
+
+            System.out.println("Expires in: " + authorizationCodeCredentials.getExpiresIn());
+        } catch (IOException | SpotifyWebApiException | ParseException | org.apache.hc.core5.http.ParseException e) {
             System.out.println("Error: " + e.getMessage());
         }
 
@@ -85,17 +116,17 @@ public class SpotifyConnector {
 
             ret.setYears();
 
-        } catch (SpotifyWebApiException | IOException e) {
+        } catch (SpotifyWebApiException | IOException | org.apache.hc.core5.http.ParseException e) {
             e.printStackTrace();
         }
 
         return ret;
     }
 
-    private _Song getSong(PlaylistTrack track) throws IOException, SpotifyWebApiException {
+    private _Song getSong(PlaylistTrack track) throws IOException, SpotifyWebApiException, org.apache.hc.core5.http.ParseException {
         _Song s = new _Song();
 
-        Track t = track.getTrack();
+        Track t = (Track) track.getTrack();
 
         s.setSongName(t.getName());
         AlbumSimplified album = t.getAlbum();
