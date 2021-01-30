@@ -5,7 +5,7 @@ INSTALL:
 
 1) Clone the repository/download the zip file
 2) Open a console window and navigate to the zip file location/repository
-3) Navigate to */AboutAPlaylist/java_backend/out/artifacts/java_backend/
+3) Navigate to */AboutAPlaylist/java_backend/out/artifacts/java_backend_jar/
 4) Give the command "java -jar java_backend.jar" 
 5) Your default browser should open to a page asking for your permission to access Spotify - Click Agree to use the App
 6) Close the browser window

@@ -52,7 +52,6 @@ public class SpotifyConnector {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             String line = reader.readLine();    // reads a line of text
 
-            System.out.println(line);
             String[] vals = line.split(" ");
             String[] resourceVals = vals[1].split("=");
             String code = resourceVals[resourceVals.length - 1];
